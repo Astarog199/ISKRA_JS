@@ -1,0 +1,27 @@
+var Led = function (pin){
+  setBusyIndicator();
+  this._pin = pin;
+  this._on = false;
+};
+
+
+Led.prototype.turnOff=function(){
+this._on = false;
+  Pin(this._pin).reset();
+};
+
+
+Led.prototype.turnOn=function(){
+this._on = false;
+  Pin(this._pin).set();
+};
+
+
+Led.prototype.brightness= function(i){
+  analogWrite(this._pin, i);
+  this._on = true;
+};
+
+exports.connect = function(pin) {
+  return new Led(pin);
+};

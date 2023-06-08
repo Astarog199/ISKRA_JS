@@ -1,0 +1,57 @@
+// ?8=K  1-7
+var ir = require('@amperka/ir-receiver').connect(P0); // 8:-?>@B
+var led = require('@amperka/led').connect(P1); // ;0<?>G:0
+var button = require('@amperka/button').connect(P3);
+// ?8=K  8-13
+var servo = require('@amperka/servo') .connect(P8);
+var buzzer = require('@amperka/buzzer').connect(P9); 
+var sonic = require('@amperka/ultrasonic').connect({trigPin:P12, echoPin:P13});//40;L=><5@
+//?8=K 
+var thermometer = require('@amperka/thermometer').connect(A3); // 40BG8: B5<?5@0BC@K
+var pot = require('@amperka/pot').connect(A0);//?>B5=F8><5B@
+var sensor = require('@amperka/light-sensor').connect(A5);// 40BG8: A25B0
+
+
+var animation = require('@amperka/animation')
+  .create({
+  from:0,
+    to:1,
+    loop:true,
+    updateInterval:0.01
+  });
+
+var armed= false;
+
+animation.on('update', function(val){
+led.brightness(val);
+  buzzer.frequency(1000+4000*val);
+});
+
+ function anxiety(){
+armed = !armed;
+buzzer.toggle(armed);
+led.toggle(armed);
+  if(armed){
+  animation.play();
+  }else{
+  animation.stop;
+  }
+}
+
+  setInterval(function() { 
+  var values_pot = 3;
+
+  sonic.ping(function(err, val) {
+    if(values_pot>(val/100)){
+       anxiety();
+    }else{
+    buzzer.toggle(armed);
+led.toggle(armed);
+    }
+
+  console.log(`motion sensor parameters: ${values_pot.toFixed(2)} m`);
+  console.log('distance: ' + (val/100).toFixed(2) +' m' +'\r\n'); 
+  }, 'cm');
+}, 100);
+/*
+*/

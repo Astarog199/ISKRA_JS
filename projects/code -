@@ -1,0 +1,87 @@
+var ir = require('@amperka/ir-receiver').connect(P0); // 8:-?>@B
+var led = require('@amperka/led').connect(P1); // ;0<?>G:0
+var button = require('@amperka/button').connect(P3);
+var buzzer = require('@amperka/buzzer').connect(P7); 
+var servo = require('@amperka/servo') .connect(P8);
+var sonic = require('@amperka/ultrasonic').connect({trigPin:P12, echoPin:P13});//40;L=><5@
+
+var thermometer = require('@amperka/thermometer').connect(A3); // 40BG8: B5<?5@0BC@K
+var pot = require('@amperka/pot').connect(A0);//?>B5=F8><5B@
+var sensor = require('@amperka/light-sensor').connect(A5);// 40BG8: A25B0
+
+var status = false;
+var value = 0.10;
+var angle = 10;
+
+var  POWER = 378130479;
+var  MINUS = 378134559;
+var  PLUS = 378132519;
+var  RED = 378077439;
+var  GREEN = 378126399;
+var  BLUE = 378110079;
+var  CROSS = 378114159;
+var  SQUARE = 378118239;
+var  TRIANGLE = 378093759;
+var  TOP_LEFT = 378097839;
+var  TOP = 378101919;
+var  TOP_RIGHT = 378099879;
+var  LEFT = 378081519;
+var  PLAY = 378091719;
+var  RIGHT = 378116199;
+var  BOTTOM_LEFT = 378083559;
+var  BOTTOM = 378124359;
+var  BOTTOM_RIGHT = 378085599;
+var  X = 378089679;
+var  Y = 378122319;
+var  Z = 378105999;
+
+
+  ir.on('receive', function(code, repeat){
+if(code == 378130479){ 
+  console.log('**** power ****', i);
+   myLoop();
+}
+
+if(code == 378077439){
+  console.log('****red****');
+  led.toggle()
+  .brightness(value);
+}
+    if(code == 378134559){
+  console.log(`****MINUS**** ${value}`);
+            if(value > 0.2){
+              value = value - 0.1;
+              led.brightness(value);
+            }
+}
+    if(code == 378132519){
+  console.log(`****PLUS**** ${value}`);
+      if(value < 0.9){
+   value = value + 0.1;
+      led.brightness(value);
+      }
+      }
+  }
+     );
+
+var i = 0;
+
+function myLoop() {
+  if (i<180){ 
+   setTimeout(function () {
+         servo.write(1 *i);
+         console.log(i);
+      myLoop()
+        },125,  ++i);
+  } else{myLoop2()}}
+
+ function myLoop2() {
+if (i== 0) {
+    myLoop()
+} else if (i=>180 ){
+     setTimeout(function () {
+         servo.write(1 *i);
+         console.log(i);
+       myLoop2()
+        },150,  --i);
+}else {myLoop()}};

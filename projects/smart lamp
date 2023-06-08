@@ -1,0 +1,69 @@
+var led = require('@amperka/led').connect(P1);
+var button = require('@amperka/button').connect(P3);
+var buzzer = require('@amperka/buzzer').connect(P13);
+var pot = require('@amperka/pot').connect(A0);
+var sensor = require('@amperka/light-sensor').connect(A5);
+var status = false;
+
+
+
+
+
+function myLoop() { 
+    setTimeout(() => {
+      var luxes = sensor.read('lx');
+      if(luxes<50){
+        console.log(`${luxes} - living room light level`);
+      }else{
+       console.log(luxes);
+       }
+   myLoop();
+    }, 15000)
+}
+
+//myLoop();
+
+function start(){
+//led.turnOn();
+//buzzer.turnOn();
+}
+
+function stop(){
+led.turnOff();
+//buzzer.turnOff();
+}
+
+function but_click(){
+    var threshold = pot.read() *100;
+    console.log(threshold + " threshold");
+  var luxes = sensor.read('lx');
+    console.log(luxes + ' lx');
+/*  
+  if(status == false){
+    start();
+  return status = true;
+  }
+  if(status == true){
+    stop();
+  return status = false;
+  }
+  
+*/
+}
+
+button.on('press', but_click);
+
+setInterval(function(){
+var threshold = pot.read() *100;
+var luxes = sensor.read('lx');
+  
+  if(luxes < threshold){
+  led.turnOn();
+  } else{
+    led.turnOff();
+  }
+}, 10);
+
+
+
+

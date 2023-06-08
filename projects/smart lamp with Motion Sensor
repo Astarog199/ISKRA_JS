@@ -1,0 +1,56 @@
+var led = require('@amperka/led').connect(P1);
+var button = require('@amperka/button').connect(P3);
+var buzzer = require('@amperka/buzzer').connect(P7);
+var pot = require('@amperka/pot').connect(A4);//?>B5=F8><5B@
+var sensor = require('@amperka/light-sensor').connect(A5);// 40BG8: A25B0
+var servo = require('@amperka/servo').connect(P13); //?@82>4
+var thermometer = require('@amperka/thermometer').connect(A3);
+var sonic = require('@amperka/ultrasonic').connect({trigPin:P12, echoPin:P13});//40;L=><5@
+var status = false;
+
+
+function start(){
+//led.turnOn();
+//buzzer.turnOn();
+}
+
+function stop(){
+
+}
+
+function but_click(){
+  if(status == false){
+    start();
+  return status = true;
+  }
+  if(status == true){
+    stop();
+  return status = false;
+  }
+}
+
+button.on('press', but_click);
+
+ 
+setInterval(function() { 
+  var values_pot = pot.read()*33;
+  var luxes = sensor.read('lx');
+
+  sonic.ping(function(err, val) {
+    if (err) { 
+      USB.write(err.msg+'\r\n');
+    };
+    if(values_pot>(val/100) && luxes<10){
+      led.turnOn()
+    .brightness(0.7);
+      setTimeout(function(){
+    led.turnOff()
+      }, 10000)
+    
+    }
+    
+  console.log(`motion sensor parameters: ${values_pot.toFixed(2)} m`);
+  console.log('distance: ' + (val/100).toFixed(2) +' m'); 
+  console.log('luxes: ' + luxes.toFixed(2) +'\r\n');
+  }, 'cm');
+}, 100);
