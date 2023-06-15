@@ -4,7 +4,7 @@ var button = require('@amperka/button').connect(P3);
 var buzzer = require('@amperka/buzzer').connect(P7); 
 var sonic = require('@amperka/ultrasonic').connect({trigPin:P12, echoPin:P13});//40;L=><5@
 
-var thermometer = require('@amperka/thermometer').connect(A3); // 40BG8: B5<?5@0BC@K
+var thermometer = require('@amperka/thermometer').connect(A3); 
 var pot = require('@amperka/pot').connect(A4);//?>B5=F8><5B@
 var sensor = require('@amperka/light-sensor').connect(A5);// 40BG8: A25B0
 
@@ -36,6 +36,7 @@ var  Z = 378105999;
   ir.on('receive', function(code, repeat){
 if(code == 378130479){
   console.log('**** power ****');
+  but_click();
 }
 
 if(code == 378077439){
@@ -60,3 +61,36 @@ if(code == 378077439){
   }
      );
 
+     function start(){
+
+      led.brightness(1);
+      buzzer.frequency(700);
+      }
+      
+      function stop(){
+      led.brightness(0.10);
+      buzzer.frequency(0.1);
+      }
+      
+      function but_click(){
+        if(status == false){
+          start();
+        return status = true;
+        }
+        if(status == true){
+          stop();
+        return status = false;
+        }
+      }
+      
+      setInterval(function(){
+      var res = thermometer.read('C') -4;
+        console.log(`${new Date()}, ${res.toFixed(1)} �C`);
+        if(res<18){
+      led.blink(1, 5);
+      buzzer.beep(1, 5);
+        }else{
+        led.turnOff();
+      buzzer.turnOff();
+        }
+      }, 5000);

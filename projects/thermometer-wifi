@@ -1,0 +1,59 @@
+var _http_ = require("http");
+
+var SSID = 'TP-Link_7C84';
+var PASSWORD = '39261830';
+var NAME = 'Astarog';
+
+var thermometer = require('@amperka/thermometer').connect(A1); 
+var pot = require('@amperka/pot').connect(A1);
+var sensor = require('@amperka/light-sensor').connect(A5);
+
+var dweet = require('@amperka/dweetio').connect(NAME);
+
+// 0AB@08205< H8=C I2C
+PrimaryI2C.setup({sda: SDA, scl: SCL, bitrate: 100000});
+ 
+// !>7405< =>2K9 >1J5:B Rtc
+var rtc = require('@amperka/rtc').connect(PrimaryI2C);
+
+
+function run() {
+setInterval(function()
+{
+  
+ 
+// #AB0=02;8205< =0 G0A0E B5:CI55 2@5<O :>=B@>;;5@0
+rtc.setTime();
+ 
+//  57C;LB0B 2 2845 AB@>:8 ISO: 2016-21-1T12:1:14
+var date = (rtc.getTime());
+
+var hourse = date.getHours();
+var min =  date.getMinutes();
+
+  
+  var temp= thermometer.read('C');
+  var temp = temp.toFixed(2)-4;
+  
+_http_.get("http://dweet.io/dweet/for/"+NAME+"?temperature="+ temp + 'time:' + hourse + ':' + min,
+function(res) {
+  res.on('data', function(data) {
+    console.log("HTTP> "+data);
+  });
+  res.on('close', function(data) {
+    console.log("Connection closed");
+  });
+});
+  console.log(temp);
+}, 1000);
+}
+
+var wifi =
+require('@amperka/wifi').setup(function(err)
+{
+   wifi.connect(SSID, PASSWORD, function(err) {
+      print('Click this link', dweet.follow());
+      run();
+   });
+});
+ 
